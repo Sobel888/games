@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baza Gier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 60%;
+            max-width: 400px;
+            margin-right: 10px;
+            font-size: 1rem;
+            border-radius: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .platform-buttons {
+            margin-bottom: 20px;
+        }
+
+        .platform-buttons button {
+            padding: 12px 25px;
+            margin: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+
+        .platform-buttons button:hover {
+            background-color: #2980b9;
+        }
+
+        .games-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .game-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .game-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            margin: 5px 0;
+        }
+
+        .game-card .paid {
+            color: green;
+        }
+
+        .game-card .free {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Baza Gier 🎮</h1>
+
+        <div class="filters">
+            <input type="text" id="search" placeholder="Wyszukaj grę..." oninput="filterGames()">
+        </div>
+
+        <div class="platform-buttons">
+            <button onclick="setPlatform(16)">PlayStation</button> <!-- PlayStation 4 -->
+            <button onclick="setPlatform(1)">Xbox</button> <!-- Xbox One -->
+            <button onclick="setPlatform(4)">PC</button> <!-- PC -->
+            <button onclick="setPlatform(7)">Nintendo Switch</button> <!-- Nintendo Switch -->
+            <button onclick="setPlatform(21)">Mobile</button> <!-- Mobile -->
+        </div>
+
+        <div class="games-list" id="games-list"></div>
+    </div>
+
+    <script>
+        const apiKey = 'dcf3ee996a384ff08f7475422d571b3a';
+        let platformFilter = '';
+
+        // Funkcja do pobrania gier z API RAWG
+        async function fetchGames(platform = '') {
+            const url = platform 
+                ? `https://api.rawg.io/api/games?key=${apiKey}&platforms=${platform}`
+                : `https://api.rawg.io/api/games?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                console.log(data);  // Logowanie odpowiedzi, aby sprawdzić, co API zwraca
+
+                if (data.results && data.results.length > 0) {
+                    displayGames(data.results);
+                } else {
+                    alert("Brak gier dla tej platformy!");
+                }
+            } catch (error) {
+                console.error("Błąd podczas pobierania gier:", error);
+                alert("Wystąpił błąd podczas pobierania gier.");
+            }
+        }
+
+        // Funkcja do wyświetlania gier na stronie
+        function displayGames(games) {
+            const gameList = document.getElementById('games-list');
+            gameList.innerHTML = '';  // Wyczyść poprzednią listę gier
+
+            games.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.classList.add('game-card');
+                gameCard.innerHTML = `
+                    <h3>${game.name}</h3>
+                    <p><strong>Status płatności:</strong> ${game.is_free ? 'Darmowa' : 'Płatna'}</p>
+                    <p><strong>Wydawnictwo:</strong> ${game.publishers[0]?.name || 'Nieznane'}</p>
+                `;
+                gameList.appendChild(gameCard);
+            });
+        }
+
+        // Funkcja do ustawienia platformy
+        function setPlatform(platform) {
+            platformFilter = platform;
+            fetchGames(platform);
+        }
+
+        // Funkcja do filtrowania gier
+        function filterGames() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const gameCards = document.querySelectorAll('.game-card');
+
+            gameCards.forEach(card => {
+                const gameName = card.querySelector('h3').textContent.toLowerCase();
+                if (gameName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Ładuj gry przy starcie strony
+        window.onload = fetchGames;
+    </script>
+</body>
+</html>
