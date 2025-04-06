@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Baza Gier</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Baza Gier 🎮</h1>
+    <div class="games">
+     
+
+    <div class="filters">
+      <input type="text" id="search" placeholder="Wyszukaj grę..." oninput="filterGames()" />
+    </div>
+
+    <div class="platform-buttons">
+      <button onclick="setPlatform('PlayStation')">PlayStation</button>
+      <button onclick="setPlatform('Xbox')">Xbox</button>
+      <button onclick="setPlatform('Nintendo')">Nintendo</button>
+      <button onclick="setPlatform('PC')">PC</button>
+      <button onclick="setPlatform('Mobile')">Mobile</button>
+    </div>
+
+    <div class="games-list" id="games-list"></div>
+  </div>
+
+  <!-- Ikona formularza -->
+  <button id="open-form">📬</button>
+
+  <!-- Formularz -->
+  <form id="contact-form" class="hidden">
+    <input type="text" name="user_name" placeholder="Twoje imię" required />
+    <input type="email" name="user_email" placeholder="Twój email" required />
+    <textarea name="message" placeholder="Twoja wiadomość" required></textarea>
+    <button type="submit">Wyślij</button>
+    <button type="button" id="close-form">❌ Zamknij</button>
+  </form>
+
+  <div id="status"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
